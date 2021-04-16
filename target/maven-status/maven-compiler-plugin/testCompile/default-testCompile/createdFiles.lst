@@ -1,0 +1,3 @@
+META-INF/panache-archive.marker
+org/villetto/apiuser/HelloResourceTest.class
+org/villetto/apiuser/NativeHelloResourceIT.class
