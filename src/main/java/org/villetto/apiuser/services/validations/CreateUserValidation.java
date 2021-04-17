@@ -2,49 +2,37 @@ package org.villetto.apiuser.services.validations;
 
 import joptsimple.internal.Strings;
 import org.villetto.apiuser.constants.ExceptionConstants;
-import org.villetto.apiuser.dto.ElementErrorDTO;
-import org.villetto.apiuser.dto.request.CreateUserDTO;
+import org.villetto.apiuser.exception.custom.UserException;
 import org.villetto.apiuser.services.api.MessagePropertiesService;
+import org.villetto.apiuser.to.request.CreateUserTO;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class CreateUserValidation implements ConstraintValidator<CreateUser, CreateUserDTO> {
+@ApplicationScoped
+public class CreateUserValidation {
 
     @Inject
     MessagePropertiesService messagePropertiesService;
 
-    @Override
-    public boolean isValid(CreateUserDTO dto, ConstraintValidatorContext constraintValidatorContext) {
-
-        List<ElementErrorDTO> errors = new ArrayList<>();
-
+    public void isValid(CreateUserTO to) throws UserException {
         Map<String, Object> fields = new HashMap<>();
 
-        fields.put("name", dto.getName());
-        fields.put("email", dto.getEmail());
+        fields.put("name", to.getName());
+        fields.put("email", to.getEmail());
 
-        fields.forEach((key, value) -> {
+        for(Map.Entry<String, Object> entry : fields.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
             if(Strings.isNullOrEmpty((String) value)) {
-                errors.add(
-                        new ElementErrorDTO(ExceptionConstants.API_ERROR_REQUIRED_FIELDS,
-                                MessageFormat.format(messagePropertiesService
-                                        .getMessageValue(ExceptionConstants.API_ERROR_REQUIRED_FIELDS), key)));
+                UserException e = new UserException(ExceptionConstants.API_ERROR_REQUIRED_FIELDS,
+                        MessageFormat.format(messagePropertiesService
+                                .getMessageValue(ExceptionConstants.API_ERROR_REQUIRED_FIELDS), key));
+                throw e;
             }
-        });
-
-        for (ElementErrorDTO e : errors) {
-            constraintValidatorContext.disableDefaultConstraintViolation();
-            constraintValidatorContext.buildConstraintViolationWithTemplate(e.getCode().concat("/").concat(e.getMessage())).addPropertyNode(e.getMessage())
-                    .addConstraintViolation();
         }
-
-        return errors.isEmpty();
     }
 }

@@ -1,13 +1,17 @@
-package org.villetto.apiuser.dto.response;
+package org.villetto.apiuser.to.response;
 
 import java.io.Serializable;
 
-public class ResponseDTO implements Serializable {
+public class ResponseTO implements Serializable {
 
     private static final long serialVersionUID = 4630108208991031569L;
 
     private Boolean status;
     private String json;
+
+    public ResponseTO() {
+        this.status = false;
+    }
 
     public Boolean getStatus() {
         return status;

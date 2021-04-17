@@ -1,12 +1,8 @@
-package org.villetto.apiuser.dto.request;
+package org.villetto.apiuser.to.request;
 
-import org.villetto.apiuser.services.validations.CreateUser;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
-@CreateUser
-public class CreateUserDTO implements Serializable {
+public class CreateUserTO implements Serializable {
 
     private static final long serialVersionUID = -5310080447811222450L;
 
